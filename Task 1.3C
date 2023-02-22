@@ -1,0 +1,36 @@
+#include <Servo.h>
+
+const int motionSensorPin = 2;
+const int ledPin = 13;
+const int tempSensorPin = A0;
+const int servoPin = 9;
+
+volatile boolean ledState = LOW;
+volatile int tempReading = 0;
+Servo myservo;
+
+void setup() {
+  pinMode(motionSensorPin, INPUT);
+  pinMode(ledPin, OUTPUT);
+  myservo.attach(servoPin);
+  attachInterrupt(digitalPinToInterrupt(motionSensorPin), toggleLed, CHANGE);
+  analogReference(INTERNAL); // use internal voltage reference for more accuracy
+  //attachInterrupt(digitalPinToInterrupt(motionSensorPin), updateServo, RISING);
+}
+
+void loop() {
+  // read temperature sensor and map to servo angle
+  int tempReading = analogRead(tempSensorPin);
+  int servoAngle = map(tempReading, 0, 1023, 0, 180);
+  myservo.write(servoAngle);
+}
+
+void toggleLed() {
+  ledState = !ledState;
+  digitalWrite(ledPin, ledState);
+  //delay(500); // debounce delay
+}
+
+void updateServo() {
+  // do nothing for now, interrupt handler will update servo in loop
+}
