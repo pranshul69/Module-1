@@ -13,6 +13,7 @@ void setup() {
   pinMode(motionSensorPin, INPUT);
   pinMode(ledPin, OUTPUT);
   myservo.attach(servoPin);
+  Serial.begin(9600); // initialize serial communication
   attachInterrupt(digitalPinToInterrupt(motionSensorPin), toggleLed, CHANGE);
   analogReference(INTERNAL); // use internal voltage reference for more accuracy
   //attachInterrupt(digitalPinToInterrupt(motionSensorPin), updateServo, RISING);
@@ -23,11 +24,16 @@ void loop() {
   int tempReading = analogRead(tempSensorPin);
   int servoAngle = map(tempReading, 0, 1023, 0, 180);
   myservo.write(servoAngle);
+  Serial.print("Temperature Reading: ");
+  Serial.println(tempReading);
+  Serial.print("Servo Angle: ");
+  Serial.println(servoAngle);
 }
 
 void toggleLed() {
   ledState = !ledState;
   digitalWrite(ledPin, ledState);
+  Serial.println("Motion Detected!"); // print message to serial monitor
   //delay(500); // debounce delay
 }
 
